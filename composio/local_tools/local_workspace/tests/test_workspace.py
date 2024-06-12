@@ -37,6 +37,7 @@ class TestCreateWorkspaceAction(unittest.TestCase):
         self.assertIsNotNone(result.workspace_id)
 
 
+@pytest.mark.skip(reason="no way of currently testing this in github action")
 class TestCmds(unittest.TestCase):
     def test_create_dir_cmd(self):
         # Setup - create an instance of CreateWorkspaceAction
