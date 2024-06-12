@@ -28,7 +28,7 @@ class SubmitPatchResponse(BaseModel):
 
 class SubmitPatch(Action):
     """
-    submits generated patch for the workspace
+    Submits generated patch for the workspace
     """
 
     _history_maintains = True
