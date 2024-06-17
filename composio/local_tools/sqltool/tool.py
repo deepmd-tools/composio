@@ -1,8 +1,9 @@
+from typing import Type
+
 from composio.core.local import Action, Tool
 
 from .actions.sql_query import SqlQuery
 
-from typing import Type
 
 class SqlTool(Tool):
     """
