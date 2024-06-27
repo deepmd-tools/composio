@@ -2,9 +2,9 @@
 import datetime
 import logging
 import traceback
-from dotenv import load_dotenv
 
 from datasets import load_dataset
+from dotenv import load_dotenv
 from rich.logging import RichHandler
 
 from composio import Action, Composio
@@ -52,7 +52,7 @@ def filter_from_repo_name(curr_dataset, repo_name):
 def get_issues_dataset():
     test_dataset = load_dataset(
         "princeton-nlp/SWE-bench_Lite",
-        split="test[210:300]",
+        split="test[1:100]",
     )
     return test_dataset
 

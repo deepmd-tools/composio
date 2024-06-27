@@ -35,7 +35,7 @@ setup(
         "crewai==0.30.11",
         "datasets>=2.20.0",
         "swebench>=1.1.0",
-        "swe_bench_docker @ git+https://github.com/ComposioHQ/SWE-bench-docker.git",
+        "unidiff>=0.7.5"
     ],
     dependency_links=[
         "git+https://github.com/ComposioHQ/SWE-bench-docker.git",

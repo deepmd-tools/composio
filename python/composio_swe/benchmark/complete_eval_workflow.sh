@@ -62,6 +62,8 @@ run_evaluation() {
         echo "SWE-bench-docker already exists, pulling latest changes."
         cd ~/SWE-bench-docker
         git pull
+        pip install -r ./requirements.txt
+	echo `which python`
     else
         # Clone the SWE-bench-docker repository
         git clone https://github.com/aorwall/SWE-bench-docker.git
@@ -71,7 +73,7 @@ run_evaluation() {
 
     mkdir -p "$log_dir_path"
     # Run the evaluation
-    python run_evaluation.py --predictions_path "$predictions_json_path" --log_dir "$log_dir_path" --swe_bench_tasks "$dataset_on_disk_path" --namespace aorwall --skip_existing
+    PYTHONPATH=.:$PATH python run_evaluation.py --predictions_path "$predictions_json_path" --log_dir "$log_dir_path" --swe_bench_tasks "$dataset_on_disk_path" --namespace aorwall --skip_existing
     popd
     cd "$current_dir"
 }
