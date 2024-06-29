@@ -1,6 +1,6 @@
 import typing as t
 from abc import ABC, abstractmethod
-
+import os
 from pydantic import BaseModel, Field
 
 from composio.core.local import Action
@@ -14,9 +14,11 @@ logger = get_logger("workspace")
 
 
 class BaseRequest(BaseModel):
-    workspace_id: str = Field(
-        ..., description="workspace-id to get the running workspace-manager"
-    )
+    # init and load workspace_id from env
+    # workspace_id: str = Field(
+    #     ..., description="workspace-id to get the running workspace-manager"
+    # )
+    pass
 
 
 class BaseResponse(BaseModel):
@@ -47,7 +49,7 @@ class BaseAction(Action[BaseRequest, BaseResponse], ABC):
         self.return_code = None
 
     def _setup(self, args: BaseRequest):
-        self.workspace_id = args.workspace_id
+        self.workspace_id = os.environ.get("COMPOSIO_WORKSPACE_ID")  # args.workspace_id
         self.workspace = WorkspaceFactory.get_instance().get_workspace_by_id(
             self.workspace_id
         )

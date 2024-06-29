@@ -1,71 +1,50 @@
-from composio_llamaindex import Action, App, ComposioToolSet
+from examples.prompts import ISSUE_DESC_TMPL
 from composio_swe.agents.base import BaseSWEAgent, SWEArgs
-from composio_swe.agents.utils import get_llama_llm
+from examples.my_agent import generate_launcher_service
 from composio_swe.config.store import IssueConfig
-from llama_index.core.agent import FunctionCallingAgentWorker
-from llama_index.core.llms import ChatMessage, MessageRole
+import os
+from composio_llamaindex import ComposioToolSet, Action
 
-from examples.prompts import AGENT_BACKSTORY_TMPL, ISSUE_DESC_TMPL
+tool_set = ComposioToolSet()
 
 
 class LlamaIndexAgent(BaseSWEAgent):
+
     def __init__(self, args: SWEArgs):
         super().__init__(args)
-        self.toolset = ComposioToolSet()
-        self.tools = [
-            *self.toolset.get_actions(
-                actions=[Action.LOCALWORKSPACE_WORKSPACESTATUSACTION]
-            ),
-            *self.toolset.get_tools(apps=[App.CMDMANAGERTOOL]),
-            *self.toolset.get_tools(apps=[App.HISTORYKEEPER]),
-        ]
 
     def solve(self, workspace_id: str, issue_config: IssueConfig):
-        llm = get_llama_llm()
+        # store workspace_id in env
+        os.environ["COMPOSIO_WORKSPACE_ID"] = workspace_id
+
         repo_name = issue_config.repo_name
         if not repo_name:
             raise ValueError("no repo-name configuration is found")
         if not issue_config.issue_id:
             raise ValueError("no git-issue configuration is found")
 
+        repo_name_dir = "/" + repo_name.split("/")[-1].strip()
+
         issue_added_instruction = ISSUE_DESC_TMPL.format(
             issue=issue_config.issue_desc, issue_id=issue_config.issue_id
         )
-        backstory_added_instruction = AGENT_BACKSTORY_TMPL.format(
-            workspace_id=workspace_id,
-            repo_name=repo_name,
-            repo_name_dir="/" + repo_name.split("/")[-1].strip(),
-            base_commit=issue_config.base_commit_id,
-        )
 
-        prefix_messages = [
-            ChatMessage(
-                role=MessageRole.SYSTEM,
-                content=(
-                    "You are the best programmer. You think carefully and step "
-                    "by step take action. Your goal is: Help fix the given issue "
-                    "/ bug in the code. And make sure you get it working. Ask the "
-                    "reviewer agent to review the patch and submit it once they "
-                    f"approve it. {backstory_added_instruction}"
-                ),
-            )
-        ]
+        agent = generate_launcher_service()
 
-        # TODO: Add callbacks to print logs.
-        agent = FunctionCallingAgentWorker(
-            tools=self.tools,  # type: ignore
-            llm=llm,
-            prefix_messages=prefix_messages,
-            max_function_calls=10,
-            allow_parallel_tool_calls=False,
-            verbose=True,
-        ).as_agent()
+        prefix_task = f"""The git repo is cloned in the dir,
+        '{repo_name_dir}', you need to work in this directory."""
+        task = f"{prefix_task}, {issue_added_instruction}, Expected outcome: The files should be modified to solve for the issue."
+        print("Tasks: ", task)
 
-        response = agent.chat(
-            f"{issue_added_instruction}, Expected outcome: A patch should be "
-            "generated which fixes the given issue"
-        )
+        response = agent.chat(task)
+
         self.logger.info("Agent response: %s", response)
+
+        # tool_set.execute_action(
+        #     action=Action.SUBMITPATCHTOOL_SUBMITPATCH,
+        #     params={},
+        #     entity_id="melissa",
+        # )
         self.current_logs.append(
             {"agent_action": "agent_finish", "agent_output": str(response)}
         )

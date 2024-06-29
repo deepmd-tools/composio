@@ -14,8 +14,11 @@ from composio.local_tools.local_workspace.commons.local_docker_workspace import 
     LocalDockerArgumentsModel,
 )
 from composio.workspace.workspace_factory import WorkspaceFactory, WorkspaceType
-from examples.crewai_agent import CrewaiAgent, SWEArgs
 
+from composio_swe.agents.base import SWEArgs
+
+# from examples.crewai_agent import CrewaiAgent, SWEArgs
+from examples.llama_agent import LlamaIndexAgent
 
 # get logger
 LOGGER_NAME = "local_workspace"
@@ -231,12 +234,15 @@ def run(test_split, print_only=False, include_hints=True):
             set_context(ctx)
 
             args = SWEArgs(agent_logs_dir=ctx.agent_logs_dir)
-            coder = CrewaiAgent(args)
+            coder = LlamaIndexAgent(args)
             coder.setup_and_solve(
                 issue_config=ctx.issue_config, workspace_id=workspace_id
             )
         except Exception as e:
+            import traceback
+
             print(f"Error processing issue {issue['instance_id']}: {e}")
+            traceback.print_exc()
 
 
 if __name__ == "__main__":
