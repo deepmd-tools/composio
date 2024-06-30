@@ -15,7 +15,9 @@ dotenv.load_dotenv()
 
 # Initialize a ComposioToolSet with the API key from environment variables
 composio_toolset = ComposioToolSet()
-
+channel_id = os.environ.get('CHANNEL_ID')
+if channel_id is None:
+    raise ValueError("Channel ID not found in environment variables")
 # Retrieve tools from Composio, specifically the EMBEDTOOL app
 # Define the tools
 tools = composio_toolset.get_actions(
@@ -45,7 +47,7 @@ prefix_messages = [
                 3. Provide actionable suggestions if there are any issues in the code.
 
                 Once you have decided on the changes, for any TODOs, create a Github issue.
-                And send the summary of the PR review to+"""+os.environ['CHANNEL_ID']+""" channel on slack. Slack doesn't have markdown and so send a plain text message.
+                And send the summary of the PR review to+"""+channel_id+""" channel on slack. Slack doesn't have markdown and so send a plain text message.
                 Also add the comprehensive review to the PR as a comment.
             """
 

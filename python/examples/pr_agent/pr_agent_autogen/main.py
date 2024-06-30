@@ -12,6 +12,10 @@ llm_config = {
     "config_list": [{"model": "gpt-4o", "api_key": os.environ["OPENAI_API_KEY"]}]
 }
 
+channel_id = os.environ['CHANNEL_ID']
+if channel_id is None:
+    raise ValueError("Channel ID not found in environment variables")
+
 code_review_assistant_prompt = """
         You are an experienced code reviewer.
         Your task is to review the provided file diff and give constructive feedback.
@@ -22,7 +26,7 @@ code_review_assistant_prompt = """
         3. Provide actionable suggestions if there are any issues in the code.
 
         Once you have decided on the changes, for any TODOs, create a Github issue.
-        And send the summary of the PR review to """+os.environ['CHANNEL_ID']+""" channel on slack. Slack doesn't have markdown and so send a plain text message.
+        And send the summary of the PR review to """+channel_id+""" channel on slack. Slack doesn't have markdown and so send a plain text message.
         Also add the comprehensive review to the PR as a comment.
 """
 # Creating an AssistantAgent instance for the chatbot

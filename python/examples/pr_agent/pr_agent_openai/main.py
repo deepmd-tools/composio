@@ -1,3 +1,4 @@
+import os
 from composio_openai import Action, ComposioToolSet
 from openai import OpenAI
 
@@ -5,7 +6,9 @@ from composio.client.collections import TriggerEventData
 
 
 openai_client = OpenAI()
-
+channel_id = os.environ.get('channel_id')
+if channel_id is None:
+    raise ValueError("Channel ID not found in environment variables")
 code_review_assistant_prompt = """
 You are an experienced code reviewer.
 Your task is to review the provided file diff and give constructive feedback and dm that to 
@@ -16,7 +19,7 @@ Follow these steps:
 3. Provide actionable suggestions if there are any issues in the code.
 
 Once you have decided on the changes, for any TODOs, create a Github issue. 
-And send the summary of the PR review to #general channel on slack. Slack doesn't have markdown and so send a plain text message.
+And send the summary of the PR review to channel id"""+channel_id+""" on slack. Slack doesn't have markdown and so send a plain text message.
 Also add the comprehensive review to the PR as a comment.
 """
 
