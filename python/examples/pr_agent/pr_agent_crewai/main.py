@@ -25,7 +25,7 @@ pr_agent_tools = composio_toolset.get_actions(
 
 system_goal = """
         You are an experienced code reviewer.
-        Your task is to review the provided file diff and give constructive feedback.
+        Your task is to review the provided file diff and the code changes in the pr and give constructive feedback.
 
         Follow these steps:
         1. Identify if the file contains significant logic changes.
@@ -46,7 +46,6 @@ code_reviewer = Agent(
     backstory="You are an experienced software engineer with a keen eye for code quality and best practices.",
     verbose=True,
     allow_delegation=False,
-    tools=pr_agent_tools,
     llm=llm,
 )
 
@@ -55,6 +54,7 @@ def review_code_task(code_to_review):
     return Task(
         description=f"Review the following code changes and provide feedback: {code_to_review}",
         agent=code_reviewer,
+        tools=pr_agent_tools,
     )
 
 

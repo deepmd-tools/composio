@@ -17,7 +17,7 @@ if channel_id is None:
 # Define the code review assistant prompt
 code_review_assistant_prompt = """
         You are an experienced code reviewer.
-        Your task is to review the provided file diff and give constructive feedback.
+        Your task is to review the provided file diff and code changes in pr and give constructive feedback.
 
         Follow these steps:
         1. Identify if the file contains significant logic changes.
