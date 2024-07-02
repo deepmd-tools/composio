@@ -13,6 +13,7 @@ from composio.local_tools.local_workspace.workspace import WorkspaceTool
 from composio.local_tools.ragtool import RagTool
 from composio.local_tools.sqltool import SqlTool
 from composio.local_tools.webtool import WebTool
+from composio.local_tools.embedtool import EmbedTool
 
 
 class LocalToolHandler:
@@ -38,6 +39,7 @@ class LocalToolHandler:
             Greptile(),
             SqlTool(),
             FileTool(),
+            EmbedTool(),
         ]
 
     def get_action_schemas(
