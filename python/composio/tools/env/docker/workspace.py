@@ -16,7 +16,7 @@ from composio.tools.env.docker.shell import DockerShell
 from composio.tools.env.id import generate_id
 
 
-DEFAULT_IMAGE = "sweagent/swe-agent"
+DEFAULT_IMAGE = "techcomposio/swe_agent"
 
 
 class DockerWorkspace(Workspace):
