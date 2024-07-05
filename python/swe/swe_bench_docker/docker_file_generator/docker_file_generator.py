@@ -59,10 +59,9 @@ class DockerfileGenerator:
         self.conda_repository_template = env.get_template("Dockerfile.conda_repository")
         self.pyenv_repository_template = env.get_template("Dockerfile.pyenv_repository")
         self.instance_template = env.get_template("Dockerfile.pyenv_instance")
-        script_dir = os.path.join(os.path.dirname(__file__), '../templates')
-        getconda_path = os.path.join(script_dir, 'getconda.sh')
+        script_dir = os.path.join(os.path.dirname(__file__), "../templates")
+        getconda_path = os.path.join(script_dir, "getconda.sh")
         self.getconda_path = os.path.relpath(script_dir, getconda_path)
-
 
         if predictions_path:
             predictions = get_instances(predictions_path)

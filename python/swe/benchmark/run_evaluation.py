@@ -5,11 +5,10 @@ import asyncio
 import datetime
 import logging
 import os
-from benchmark.constants import MODEL_GPT4
-
-from composio_crewai import ComposioToolSet
 from pathlib import Path
 
+from benchmark.constants import MODEL_GPT4
+from composio_crewai import ComposioToolSet
 from composio_swe.config.constants import (
     KEY_API_KEY,
     LOCAL_CACHE_DIRECTORY_NAME,
@@ -22,7 +21,6 @@ from rich.logging import RichHandler
 
 from composio import Action, Composio
 from composio.tools.env.factory import ExecEnv, WorkspaceFactory
-
 from swe.benchmark.get_score_card import MODEL_GPT4, generate_scorecard
 from swe.benchmark.setup_test_bed import create_patches_file
 from swe.examples.crewai_agent import CrewaiAgent, SWEArgs

@@ -111,13 +111,14 @@ class ShellFactory(WithLogger):
         self._recent = None
 
 
-class Workspace(ABC):
+class Workspace(WithLogger, ABC):
     """Workspace abstraction for executing tools."""
 
     _shell_factory: t.Optional[ShellFactory] = None
 
     def __init__(self):
         """Initialize workspace."""
+        super().__init__()
         self.id = generate_id()
 
     def __str__(self) -> str:
