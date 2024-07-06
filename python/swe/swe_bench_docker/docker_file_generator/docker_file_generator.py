@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import List
+from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel, Field
@@ -46,8 +47,9 @@ class DockerfileGenerator:
                 f"{self.namespace}/{self.image_prefix}-pyenvs:bookworm-slim",
             ),
         ]
-
-        env = Environment(loader=FileSystemLoader("swe_bench_docker/templates"))
+        script_dir = os.path.dirname(__file__)
+        templates_folder = script_dir / Path("../templates")
+        env = Environment(loader=FileSystemLoader(templates_folder))
         # self.conda_instance_template = env.get_template(f"Dockerfile.conda_instance")
         # self.pyenv_instance_template = env.get_template(f"Dockerfile.pyenv_instance")
         self.conda_testbed_template = env.get_template("Dockerfile.swe")
@@ -55,7 +57,6 @@ class DockerfileGenerator:
         self.conda_repository_template = env.get_template("Dockerfile.conda_repository")
         self.pyenv_repository_template = env.get_template("Dockerfile.pyenv_repository")
         self.instance_template = env.get_template("Dockerfile.pyenv_instance")
-        script_dir = os.path.join(os.path.dirname(__file__), "../templates")
         getconda_path = os.path.join(script_dir, "getconda.sh")
         self.getconda_path = os.path.relpath(script_dir, getconda_path)
 
@@ -240,6 +241,8 @@ class DockerfileGenerator:
         use_conda: bool = True,
     ):
         repo_name = _repo_name(repo)
+        if repo_name != "matplotlib__matplotlib":
+            return
         repo_image_name = repo.replace("/", "_")
 
         env_name = f"{repo_name}__{version}"
@@ -299,7 +302,7 @@ class DockerfileGenerator:
                     python_version=specifications["python"],
                 )
 
-                conda_create_cmd = "conda env create -f environment.yml"
+                conda_create_cmd = f"conda env create -n {env_name} -f environment.yml"
         elif use_conda:
             conda_create_cmd = f"conda create -n {env_name} python={specifications['python']} {pkgs} -y"
         else:

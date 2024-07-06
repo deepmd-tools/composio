@@ -177,7 +177,7 @@ def build_image_and_container(repo, repo_to_workspace_map, base_commit):
         and "status" in clone_resp
         and clone_resp["status"] == "failure"
     ):
-        raise Exception(clone_resp["details"])
+        raise Exception(clone_resp)
     git_clone_time = datetime.datetime.now() - start_time
     logger.info("git clone completed, time taken: %s", git_clone_time)
     repo_to_workspace_map[repo] = workspace.id
@@ -265,14 +265,14 @@ def run(test_split, print_only=False, include_hints=True, logs_dir=None):
             ):  # You need to define or implement check_image_exists
                 repo_to_image_id_map.setdefault(repo, image_name)
 
-            print(f"Processing issue: {count} with repoMap: {repo_to_workspace_map}")
-            print(f"Repo: {repo}")
-            print(f"Issue id: {issue['instance_id']}")
+            logger.info(f"Processing issue: {count} with repoMap: {repo_to_workspace_map}\n"
+                        f"Repo: {repo}"
+                        f"Issue id: {issue['instance_id']}")
 
             if print_only:
                 if include_hints:
-                    print(f"Hints: {issue['hints_text']}")
-                print("--------------------------------------------------")
+                    logger.info(f"Hints: {issue['hints_text']}")
+                logger.info("--------------------------------------------------")
                 continue
 
             workspace_id = setup_workspace(
@@ -331,7 +331,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--test_split",
         type=str,
-        default="20:22",
+        default="1:10",
         help="Test split range (e.g., 1:10)",
     )
     parser.add_argument(

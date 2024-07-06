@@ -55,8 +55,6 @@ RUN git -c advice.detachedHead=false checkout {{ environment_setup_commit }}
 RUN {{conda_create_cmd}}
 SHELL ["conda", "run", "-n", "{{ testbed }}", "/bin/bash", "-c"]
 
-RUN pip install -U pip setuptools
-
 {% if pre_install_cmds -%}
 {% for cmd in pre_install_cmds -%}
 RUN {{ cmd }}
