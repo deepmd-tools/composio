@@ -1,12 +1,7 @@
 import { Hono } from 'hono';
 import { CloudflareToolSet } from "composio-core"
+
 const app = new Hono();
-
-// Configuration for the AI model
-const config = {
-  model: '@hf/nousresearch/hermes-2-pro-mistral-7b',
-};
-
 
 // Function to set up the GitHub connection for the user if it doesn't exist
 async function setupUserConnectionIfNotExists(toolset, entityId, c) {
@@ -45,7 +40,7 @@ app.post('/', async (c) => {
     ];
 
     // Run the AI model with the messages and tools
-    const toolCallResp = await c.env.AI.run(config.model, {
+    const toolCallResp = await c.env.AI.run('@hf/nousresearch/hermes-2-pro-mistral-7b', {
       messages,
       tools,
     });
