@@ -199,6 +199,7 @@ def setup_workspace(
     # if workspace_id:
     #     return workspace_id
     if workspace_env == ExecEnv.DOCKER:
+        # Images are only available in docker env.
         workspace_id = create_workspace_from_image(
             repo=repo,
             repo_to_image_id_map=repo_to_image_id_map,
@@ -254,4 +255,4 @@ def check_and_pull_image(image_name):
 
 
 if __name__ == "__main__":
-    get_score(logs_dir="/Users/karanvaidya/1720770557")
+    get_score(logs_dir="/Users/karanvaidya/1720733455")
