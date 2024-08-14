@@ -66,6 +66,7 @@ tools_require = [
     "ruff",
     "flake8",
     "transformers",
+    "pyqt6",
 ]
 
 all_requirements = core_requires + tools_require

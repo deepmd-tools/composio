@@ -2,16 +2,16 @@ import typing as t
 
 from composio.tools.local.base import Action, Tool
 
-from .actions import Notify, ScreenCapture, TakeUserInput
+from .actions import CreateEvent
 
 
-class SystemTools(Tool):
+class Calendar(Tool):
     """
-    System Tools for LLM
+    Calendar Tools for LLM
     """
 
     def actions(self) -> list[t.Type[Action]]:
-        return [ScreenCapture, Notify, TakeUserInput]
+        return [CreateEvent]
 
     def triggers(self) -> list:
         return []

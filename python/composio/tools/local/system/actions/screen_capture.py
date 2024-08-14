@@ -17,6 +17,7 @@ class ScreenCaptureResponse(BaseModel):
 class ScreenCapture(Action[ScreenCaptureRequest, ScreenCaptureResponse]):
     """
     Useful to capture a screenshot of the current screen.
+    This is not idempotent and returns different file paths each time it is run.
     """
 
     _display_name = "Capture a screenshot"
@@ -32,6 +33,7 @@ class ScreenCapture(Action[ScreenCaptureRequest, ScreenCaptureResponse]):
         import pyautogui
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        print(f"Capturing screenshot at {timestamp}")
         file_path = LOCAL_CACHE_DIRECTORY / "output" / f"screenshot_{timestamp}.png"
         try:
             screenshot = pyautogui.screenshot()
