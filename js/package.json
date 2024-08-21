@@ -1,6 +1,7 @@
 {
+  "license": "MIT",
   "name": "composio-core",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +16,6 @@
   },
   "keywords": [],
   "author": "Utkarsh Dixit <utkarsh@composio.dev>",
-  "license": "ISC",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240718.0",
     "@hey-api/openapi-ts": "^0.52.4",
