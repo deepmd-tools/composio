@@ -1,6 +1,9 @@
 name: Example Tests
 
 on:
+  push:
+    branches:
+      - ft-tests-debug
   workflow_call:
     inputs:
       working-directory:

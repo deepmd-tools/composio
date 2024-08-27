@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - ft-tests-debug
 
 jobs:
   test-examples:
