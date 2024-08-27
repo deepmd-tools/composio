@@ -19,6 +19,7 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 COMPOSIO_API_KEY = os.environ.get("COMPOSIO_API_KEY")
 JULEP_API_KEY = os.environ.get("JULEP_API_KEY")
 JULEP_API_URL = os.environ.get("JULEP_API_URL")
+COMPOSIO_BASE_URL = os.environ.get("COMPOSIO_BASE_URL")
 
 # Plugin test definitions
 EXAMPLES = {
@@ -32,6 +33,7 @@ EXAMPLES = {
         "env": {
             "OPENAI_API_KEY": OPENAI_API_KEY,
             "COMPOSIO_API_KEY": COMPOSIO_API_KEY,
+            "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL,
         },
     },
     "llamaindex": {
@@ -44,6 +46,7 @@ EXAMPLES = {
         "env": {
             "OPENAI_API_KEY": OPENAI_API_KEY,
             "COMPOSIO_API_KEY": COMPOSIO_API_KEY,
+            "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL,
         },
     },
     "local_tools": {
@@ -53,7 +56,7 @@ EXAMPLES = {
             "type": "stdout",
             "values": ["11962"],
         },
-        "env": {"OPENAI_API_KEY": OPENAI_API_KEY},
+        "env": {"OPENAI_API_KEY": OPENAI_API_KEY, "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL},
     },
     "runtime_tools": {
         "plugin": "langchain",
@@ -62,7 +65,7 @@ EXAMPLES = {
             "type": "stdout",
             "values": ["2645406630"],
         },
-        "env": {"OPENAI_API_KEY": OPENAI_API_KEY},
+        "env": {"OPENAI_API_KEY": OPENAI_API_KEY, "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL},
     },
     "crewai": {
         "plugin": "crewai",
@@ -74,6 +77,7 @@ EXAMPLES = {
         "env": {
             "OPENAI_API_KEY": OPENAI_API_KEY,
             "COMPOSIO_API_KEY": COMPOSIO_API_KEY,
+            "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL,
         },
     },
     # TOFIX(@kaave): httpcore.UnsupportedProtocol: Request URL is missing an 'http://' or 'https://' protocol.
@@ -98,7 +102,11 @@ EXAMPLES = {
             "type": "stdout",
             "values": ["Action executed successfully"],
         },
-        "env": {"OPENAI_API_KEY": OPENAI_API_KEY, "COMPOSIO_API_KEY": COMPOSIO_API_KEY},
+        "env": {
+            "OPENAI_API_KEY": OPENAI_API_KEY,
+            "COMPOSIO_API_KEY": COMPOSIO_API_KEY,
+            "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL,
+        },
     },
     "langgraph": {
         "file": PLUGINS / "langgraph" / "langgraph_demo.py",
@@ -106,7 +114,11 @@ EXAMPLES = {
             "type": "stdout",
             "values": ["Action executed successfully"],
         },
-        "env": {"OPENAI_API_KEY": OPENAI_API_KEY, "COMPOSIO_API_KEY": COMPOSIO_API_KEY},
+        "env": {
+            "OPENAI_API_KEY": OPENAI_API_KEY,
+            "COMPOSIO_API_KEY": COMPOSIO_API_KEY,
+            "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL,
+        },
     },
     "openai": {
         "plugin": "openai",
@@ -115,7 +127,11 @@ EXAMPLES = {
             "type": "stdout",
             "values": ["Action executed successfully"],
         },
-        "env": {"OPENAI_API_KEY": OPENAI_API_KEY, "COMPOSIO_API_KEY": COMPOSIO_API_KEY},
+        "env": {
+            "OPENAI_API_KEY": OPENAI_API_KEY,
+            "COMPOSIO_API_KEY": COMPOSIO_API_KEY,
+            "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL,
+        },
     },
     "lyzr": {
         "plugin": "lyzr",
@@ -124,7 +140,11 @@ EXAMPLES = {
             "type": "stdout",
             "values": ["Action executed successfully"],
         },
-        "env": {"OPENAI_API_KEY": OPENAI_API_KEY, "COMPOSIO_API_KEY": COMPOSIO_API_KEY},
+        "env": {
+            "OPENAI_API_KEY": OPENAI_API_KEY,
+            "COMPOSIO_API_KEY": COMPOSIO_API_KEY,
+            "COMPOSIO_BASE_URL": COMPOSIO_BASE_URL,
+        },
     },
     # "praisonai": {
     #     "plugin": "praisonai",
