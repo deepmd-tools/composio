@@ -49,6 +49,7 @@ jobs:
           JULEP_API_KEY: ${{secrets.JULEP_API_KEY}}
           JULEP_API_URL: ${{secrets.JULEP_API_URL}}
           COMPOSIO_API_KEY: ${{secrets.COMPOSIO_API_KEY_RELEASE}}
+          COMPOSIO_BASE_URL: http://prodhermesPublicLb-1890088262.us-east-1.elb.amazonaws.com/api
         run: |
           sudo apt-get update --fix-missing
           sudo apt-get autoremove
