@@ -58,4 +58,4 @@ jobs:
           
           composio apps update
 
-          CI=false COMPOSIO_BASE_URL=https://backend.composio.dev/api PLUGIN_TO_TEST=${{matrix.package}} pytest -vv tests/test_example.py
+          CI=false COMPOSIO_BASE_URL=http://prodhermesPublicLb-1890088262.us-east-1.elb.amazonaws.com/api PLUGIN_TO_TEST=${{matrix.package}} pytest -vv tests/test_example.py
