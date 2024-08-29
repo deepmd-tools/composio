@@ -1002,9 +1002,6 @@ class Actions(Collection[ActionModel]):
             request_param_schema = action_req_schema[param]
             file_readable = request_param_schema.get("file_readable", False)
             file_uploadable = _check_file_uploadable(request_param_schema)
-            request_param_schema = action_req_schema[param]
-            file_readable = request_param_schema.get("file_readable", False)
-            file_uploadable = _check_file_uploadable(request_param_schema)
 
             if file_readable and isinstance(value, str) and os.path.isfile(value):
                 with open(value, "rb") as file:
@@ -1017,16 +1014,6 @@ class Actions(Collection[ActionModel]):
                             "utf-8"
                         )
             elif file_uploadable and isinstance(value, str):
-                if not os.path.isfile(value):
-                    raise ValueError(f"Attachment File with path `{value}` not found.")
-
-                with open(value, "rb") as file:
-                    file_content = file.read()
-
-                modified_params[param] = {
-                    "name": os.path.basename(value),
-                    "content": base64.b64encode(file_content).decode("utf-8"),
-                }
                 if not os.path.isfile(value):
                     raise ValueError(f"Attachment File with path `{value}` not found.")
 

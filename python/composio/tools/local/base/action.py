@@ -16,17 +16,6 @@ from composio.client.enums.base import SentinalObject
 from composio.utils.logging import WithLogger
 
 
-def _check_file_uploadable(param_field: dict) -> bool:
-    return (
-        isinstance(param_field, dict)
-        and (param_field.get("title") in ["File", "FileType"])
-        and all(
-            field_name in param_field.get("properties", {})
-            for field_name in ["name", "content"]
-        )
-    )
-
-
 def generate_hashed_appId(input_string):
     # Generate a 32-character hash using MD5
     hash_object = hashlib.md5(input_string.encode())
