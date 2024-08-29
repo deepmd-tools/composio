@@ -231,7 +231,7 @@ class AuthSchemeField(BaseModel):
     description: str
     type: str
 
-    displayName: t.Optional[str] = None
+    display_name: t.Optional[str] = None
 
     required: bool = False
     expected_from_customer: bool = True
@@ -398,24 +398,19 @@ class TriggerModel(BaseModel):
     logo: t.Optional[str] = None
 
 
-class ExecutionDetailsModel(BaseModel):
-    """Execution details data model."""
-
-    executed: bool
-
-
 class SuccessExecuteActionResponseModel(BaseModel):
     """Success execute action response data model."""
 
-    execution_details: ExecutionDetailsModel
-    response_data: str
+    successfull: bool
+    data: t.Dict
+    error: t.Optional[str] = None
 
 
-class FileModel(BaseModel):
+class FileType(BaseModel):
     name: str = Field(
         ..., description="File name, contains extension to indetify the file type"
     )
-    content: bytes = Field(..., description="File content in base64")
+    content: str = Field(..., description="File content in base64")
 
 
 class Connection(BaseModel):
@@ -540,8 +535,13 @@ class TriggerSubscription(logging.WithLogger):
         """Filter events and call the callback function."""
         data = self._parse_payload(event=event)
         if data is None:
+            self.logger.error(f"Error parsing trigger payload: {event}")
             return
 
+        self.logger.info(
+            f"Received trigger event with trigger ID: {data.metadata.id} "
+            f"and trigger name: {data.metadata.triggerName}"
+        )
         awaitables: t.List[Future] = []
         with ThreadPoolExecutor() as executor:
             for callback, filters in self._callbacks:
@@ -582,11 +582,12 @@ class TriggerSubscription(logging.WithLogger):
             time.sleep(1)
 
 
-class _PusherClient:
+class _PusherClient(logging.WithLogger):
     """Pusher client for Composio SDK."""
 
     def __init__(self, client_id: str, base_url: str, api_key: str) -> None:
         """Initialize pusher client."""
+        super().__init__()
         self.client_id = client_id
         self.base_url = base_url
         self.api_key = api_key
@@ -719,6 +720,7 @@ class Triggers(Collection[TriggerModel]):
 
     def subscribe(self, timeout: float = 15.0) -> TriggerSubscription:
         """Subscribe to a trigger and receive trigger events."""
+        self.logger.info("Creating trigger subscription")
         response = self._raise_if_required(
             response=self.client.http.get(
                 url="/v1/client/auth/client_info",
@@ -812,14 +814,13 @@ class ActionModel(BaseModel):
     """Action data model."""
 
     name: str
-    display_name: str
+    display_name: t.Optional[str] = None
     parameters: ActionParametersModel
     response: ActionResponseModel
-    appKey: str
+    appName: str
     appId: str
     tags: t.List[str]
-    appName: str
-    enabled: bool
+    enabled: bool = False
 
     logo: t.Optional[str] = None
     description: t.Optional[str] = None
@@ -868,12 +869,10 @@ class Actions(Collection[ActionModel]):
             and (len(local_apps) > 0 or len(local_actions) > 0)
         )
         if only_local_apps:
-            from composio.tools.local.handler import (  # pylint: disable=import-outside-toplevel
-                LocalClient,
-            )
-
-            local_items = LocalClient().get_action_schemas(
-                apps=local_apps, actions=local_actions, tags=tags
+            local_items = self.client.local.get_action_schemas(
+                apps=local_apps,
+                actions=local_actions,
+                tags=tags,
             )
             return [self.model(**item) for item in local_items]
 
@@ -1003,6 +1002,9 @@ class Actions(Collection[ActionModel]):
             request_param_schema = action_req_schema[param]
             file_readable = request_param_schema.get("file_readable", False)
             file_uploadable = _check_file_uploadable(request_param_schema)
+            request_param_schema = action_req_schema[param]
+            file_readable = request_param_schema.get("file_readable", False)
+            file_uploadable = _check_file_uploadable(request_param_schema)
 
             if file_readable and isinstance(value, str) and os.path.isfile(value):
                 with open(value, "rb") as file:
@@ -1015,6 +1017,16 @@ class Actions(Collection[ActionModel]):
                             "utf-8"
                         )
             elif file_uploadable and isinstance(value, str):
+                if not os.path.isfile(value):
+                    raise ValueError(f"Attachment File with path `{value}` not found.")
+
+                with open(value, "rb") as file:
+                    file_content = file.read()
+
+                modified_params[param] = {
+                    "name": os.path.basename(value),
+                    "content": base64.b64encode(file_content).decode("utf-8"),
+                }
                 if not os.path.isfile(value):
                     raise ValueError(f"Attachment File with path `{value}` not found.")
 

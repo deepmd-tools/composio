@@ -1,3 +1,5 @@
+import atexit
+
 from composio.client import Composio
 from composio.client.enums import (
     Action,
@@ -10,13 +12,15 @@ from composio.client.enums import (
     TriggerType,
 )
 from composio.tools import ComposioToolSet
-from composio.tools.env.base import Shell
+from composio.tools.base.runtime import action
 from composio.tools.env.factory import (
     WorkspaceConfigType,
     WorkspaceFactory,
     WorkspaceType,
 )
-from composio.tools.local.base.decorators import action
+from composio.tools.env.host.shell import Shell
+from composio.utils.logging import LogLevel
+from composio.utils.warnings import create_latest_version_warning_hook
 
 
 __all__ = (
@@ -35,6 +39,9 @@ __all__ = (
     "WorkspaceFactory",
     "Shell",
     "action",
+    "LogLevel",
 )
 
-__version__ = "0.4.1"
+__version__ = "0.5.10"
+
+atexit.register(create_latest_version_warning_hook(version=__version__))

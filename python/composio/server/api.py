@@ -17,7 +17,7 @@ from hashlib import md5
 from pathlib import Path
 
 import typing_extensions as te
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
@@ -26,6 +26,8 @@ from composio.cli.context import get_context
 from composio.client.collections import ActionModel, AppModel
 from composio.client.enums.base import get_runtime_actions
 from composio.tools.env.base import ENV_ACCESS_TOKEN
+from composio.tools.local import load_local_tools
+from composio.utils.logging import get as get_logger
 
 
 ResponseType = t.TypeVar("ResponseType")
@@ -93,10 +95,13 @@ class ExecuteActionRequest(BaseModel):
 
 def create_app() -> FastAPI:
     """Create Fast API app."""
+    load_local_tools()
+
     access_token = os.environ.get(ENV_ACCESS_TOKEN)
     tooldir = tempfile.TemporaryDirectory()
     app = FastAPI(on_shutdown=[tooldir.cleanup])
     sys.path.append(tooldir.name)
+    logger = get_logger()
 
     def with_exception_handling(f: t.Callable[P, R]) -> t.Callable[P, APIResponse[R]]:
         """Marks a callback as wanting to receive the current context object as first argument."""
@@ -105,6 +110,7 @@ def create_app() -> FastAPI:
             try:
                 return APIResponse[R](data=f(*args, **kwargs))
             except Exception as e:
+                logger.error(traceback.format_exc())
                 return APIResponse[R](
                     data=None,
                     error=str(e),
@@ -240,9 +246,13 @@ def create_app() -> FastAPI:
         return get_runtime_actions()
 
     @app.get("/api/download")
-    def _download_file_or_dir(request: Request):
+    def _download_file_or_dir(file: t.Optional[str] = None):
         """Get list of available developer tools."""
-        path = Path(request.query_params["file"])
+        if not file:
+            raise HTTPException(
+                status_code=400, detail="File path is required as query parameter"
+            )
+        path = Path(file)
         if not path.exists():
             return Response(
                 content=APIResponse[None](

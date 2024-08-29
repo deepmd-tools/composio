@@ -127,12 +127,24 @@ class DockerWorkspace(RemoteWorkspace):
 
     def _wait(self) -> None:
         """Wait for docker workspace to get started."""
-        while True:
+        deadline = time.time() + float(os.environ.get("WORKSPACE_WAIT_TIMEOUT", 60.0))
+        while time.time() < deadline:
             try:
-                if self._request(endpoint="", method="get").status_code == 200:
+                if (
+                    self._request(endpoint="", method="get", log=False).status_code
+                    == 200
+                ):
                     return
             except requests.ConnectionError:
-                time.sleep(0.1)
+                time.sleep(1)
+
+        self.logger.error(
+            "Timed out while waiting for docker workspace to start\n"
+            f"{self._container.logs().decode(encoding='utf-8')}"
+        )
+        raise ComposioSDKError(
+            message="Timed out while waiting for docker workspace to start"
+        )
 
     @property
     def client(self) -> DockerClient:

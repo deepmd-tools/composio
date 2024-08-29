@@ -9,11 +9,22 @@ from typing import Generic, List, Optional, Type, TypeVar, Union
 
 import inflection
 import jsonref
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from composio.client.collections import _check_file_uploadable
 from composio.client.enums.base import SentinalObject
 from composio.utils.logging import WithLogger
+
+
+def _check_file_uploadable(param_field: dict) -> bool:
+    return (
+        isinstance(param_field, dict)
+        and (param_field.get("title") in ["File", "FileType"])
+        and all(
+            field_name in param_field.get("properties", {})
+            for field_name in ["name", "content"]
+        )
+    )
 
 
 def generate_hashed_appId(input_string):
@@ -28,13 +39,6 @@ def generate_hashed_appId(input_string):
 
 RequestType = TypeVar("RequestType", bound=BaseModel)
 ResponseType = TypeVar("ResponseType", bound=BaseModel)
-
-
-class FileModel(BaseModel):
-    name: str = Field(
-        ..., description="File name, contains extension to indetify the file type"
-    )
-    content: bytes = Field(..., description="File content in base64")
 
 
 class Action(ABC, SentinalObject, WithLogger, Generic[RequestType, ResponseType]):
@@ -98,7 +102,7 @@ class Action(ABC, SentinalObject, WithLogger, Generic[RequestType, ResponseType]
 
     @abstractmethod
     def execute(
-        self, request_data: RequestType, authorisation_data: dict
+        self, request_data: RequestType, metadata: dict
     ) -> Union[dict, ResponseType]:
         pass
 
@@ -211,7 +215,7 @@ class Action(ABC, SentinalObject, WithLogger, Generic[RequestType, ResponseType]
                         modified_request_data,
                     )
                 ),
-                authorisation_data=metadata,
+                metadata=metadata,
             )
         except json.JSONDecodeError as e:
             return {
