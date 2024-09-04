@@ -59,20 +59,23 @@ async function sendSummaryEmail(toolset, entityId, summarizedContent, c) {
   console.log('Sending summarized email...');
   const tools = await toolset.getActions({ actions: ['gmail_send_email'] }, entityId);
   const instruction = `
-    "Send the summarized content via email."
+    Send an email to recipient email prathit3.14@gmail.com
+    subject is "Summarized yo"
+    body is "Hello there"
   `;
 
   let messages = [
-    { role: 'system', content: '' },
+    { role: 'system', content: 'You are an expert gmail assistant who is very good at sending emails using the tools provided to you. THE TOOL CALL FOR SENDING EMAIL IS GMAIL_SEND_EMAIL, USE IT' },
     { role: 'user', content: instruction },
   ];
 
+  console.log("The tool is", tools);
   const toolCallResp = await c.env.AI.run(config.model, {
     messages,
     tools,
   });
 
-  console.log('Email sent successfully.');
+  console.log('Email sent successfully.', toolCallResp);
   return await toolset.handleToolCall(toolCallResp, entityId);
 }
 
@@ -88,11 +91,11 @@ app.post('/help', async (c) => {
     await setupUserConnectionIfNotExists(toolset, entity.id, c);
 
     // Step 1: Fetch emails
-    const fetchedEmails = await fetchEmails(toolset, entity.id, c);
+    //const fetchedEmails = await fetchEmails(toolset, entity.id, c);
 
     // Step 2: Summarize content (you may want to add an additional AI step here to summarize the fetched emails)
-    const summarizedContent = fetchedEmails; // Replace this with actual summarization logic if needed
-
+    //const summarizedContent = fetchedEmails; // Replace this with actual summarization logic if needed
+    const summarizedContent=""
     // Step 3: Send summarized email
     await sendSummaryEmail(toolset, entity.id, summarizedContent, c);
 
